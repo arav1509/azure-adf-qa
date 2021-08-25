@@ -11,7 +11,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "storage-account-kv",
-				"secretVersion": "e976bece040243ba83da8f9134f15eee"
+				"secretVersion": "aravind"
 			}
 		}
 	}
