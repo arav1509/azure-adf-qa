@@ -1,0 +1,10 @@
+{
+	"name": "kv_qa_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://arav1509-qa-kv.vault.azure.net/"
+		}
+	}
+}
