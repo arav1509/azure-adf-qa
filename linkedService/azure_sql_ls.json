@@ -1,0 +1,18 @@
+{
+	"name": "azure_sql_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "kv_qa_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "azure-sql-qa-kv",
+				"secretVersion": "92457747a48340a88b584a336862a6bd"
+			}
+		}
+	}
+}
