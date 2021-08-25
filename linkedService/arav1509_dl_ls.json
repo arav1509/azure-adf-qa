@@ -12,7 +12,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "data-lake-qa-kv",
-				"secretVersion": "aravind"
+				"secretVersion": ""
 			}
 		}
 	}
