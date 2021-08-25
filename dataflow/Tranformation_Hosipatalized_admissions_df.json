@@ -1,0 +1,80 @@
+{
+	"name": "Tranformation_Hosipatalized_admissions_df",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "hospital_admissions_ds",
+						"type": "DatasetReference"
+					},
+					"name": "HospitalAdmissionSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "country_lookup_ds",
+						"type": "DatasetReference"
+					},
+					"name": "CountryLookupSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "Date_Dimention_file_ds",
+						"type": "DatasetReference"
+					},
+					"name": "DateDimentionSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Weekly_Hosipatalized_ds",
+						"type": "DatasetReference"
+					},
+					"name": "WeeklySink"
+				},
+				{
+					"dataset": {
+						"referenceName": "Daily_hospital_admissions_ds",
+						"type": "DatasetReference"
+					},
+					"name": "DailySink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Lookup1"
+				},
+				{
+					"name": "SelectRequriedFileds"
+				},
+				{
+					"name": "DailyWeeklySplit"
+				},
+				{
+					"name": "MaxDateYearOftheWeek"
+				},
+				{
+					"name": "WeekDatesJoin"
+				},
+				{
+					"name": "WeeklyPivote"
+				},
+				{
+					"name": "SelectRequiredFileds1"
+				},
+				{
+					"name": "DailyPivot"
+				},
+				{
+					"name": "WeeklySort"
+				},
+				{
+					"name": "DailySort"
+				}
+			],
+			"script": "source(output(\n\t\tcountry as string,\n\t\tindicator as string,\n\t\tdate as date,\n\t\tyear_week as string,\n\t\tvalue as short,\n\t\tsource as string,\n\t\turl as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> HospitalAdmissionSource\nsource(output(\n\t\tcountry as string,\n\t\tcountry_code_2_digit as string,\n\t\tcountry_code_3_digit as string,\n\t\tcontinent as string,\n\t\tpopulation as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> CountryLookupSource\nsource(output(\n\t\tdate_key as string,\n\t\tdate as string,\n\t\tyear as string,\n\t\tmonth as string,\n\t\tday as string,\n\t\tday_name as string,\n\t\tday_of_year as string,\n\t\tweek_of_month as string,\n\t\tweek_of_year as string,\n\t\tmonth_name as string,\n\t\tyear_month as string,\n\t\tyear_week as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> DateDimentionSource\nHospitalAdmissionSource, CountryLookupSource lookup(HospitalAdmissionSource@country == CountryLookupSource@country,\n\tmultiple: false,\n\tpickup: 'any',\n\tbroadcast: 'auto')~> Lookup1\nLookup1 select(mapColumn(\n\t\tcountry = HospitalAdmissionSource@country,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tpopulation,\n\t\tcontinent,\n\t\tindicator,\n\t\tReported_Date = date,\n\t\tReported_year_week = year_week,\n\t\tvalue,\n\t\tsource\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRequriedFileds\nSelectRequriedFileds split(like(indicator, 'Weekly%'),\n\tdisjoint: false) ~> DailyWeeklySplit@(Weekly, Daily)\nDateDimentionSource aggregate(groupBy(ecdc_year_week = year+'-W'+lpad(week_of_year,2,'0')),\n\tweek_start_date = min(date),\n\t\tWeek_end_date = max(date)) ~> MaxDateYearOftheWeek\nDailyWeeklySplit@Weekly, MaxDateYearOftheWeek join(Reported_year_week == ecdc_year_week,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> WeekDatesJoin\nSelectRequiredFileds1 pivot(groupBy(country,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tpopulation,\n\t\tcontinent,\n\t\tReported_year_week,\n\t\tweek_start_date,\n\t\tWeek_end_date,\n\t\tsource),\n\tpivotBy(indicator),\n\tTotal = sum(value),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> WeeklyPivote\nWeekDatesJoin select(mapColumn(\n\t\tcountry,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tpopulation,\n\t\tcontinent,\n\t\tindicator,\n\t\tReported_year_week,\n\t\tvalue,\n\t\tsource,\n\t\tweek_start_date,\n\t\tWeek_end_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRequiredFileds1\nDailyWeeklySplit@Daily pivot(groupBy(country,\n\t\tcountry_code_2_digit,\n\t\tcountry_code_3_digit,\n\t\tpopulation,\n\t\tcontinent,\n\t\tReported_Date,\n\t\tsource,\n\t\tReported_year_week),\n\tpivotBy(indicator),\n\tTotal = sum(value),\n\tcolumnNaming: '$N$V',\n\tlateral: true) ~> DailyPivot\nWeeklyPivote sort(desc(Reported_year_week, true),\n\tasc(country, true)) ~> WeeklySort\nDailyPivot sort(desc(Reported_year_week, true),\n\tasc(country, true)) ~> DailySort\nWeeklySort sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['Weekly_hospital_admissions.csv'],\n\ttruncate: true,\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> WeeklySink\nDailySort sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['Daily_hospital_admissions.csv'],\n\ttruncate: true,\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> DailySink"
+		}
+	}
+}

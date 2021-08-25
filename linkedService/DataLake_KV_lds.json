@@ -1,0 +1,11 @@
+{
+	"name": "DataLake_KV_lds",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://arav1509-KV.vault.azure.net/"
+		}
+	}
+}

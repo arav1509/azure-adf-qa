@@ -1,0 +1,9 @@
+{
+	"name": "arav1509-adf-qa",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "79134295-a944-4046-ac4d-78aef244b73f",
+		"tenantId": "570057f4-73ef-41c8-bcbb-08db2fc15c2b"
+	}
+}

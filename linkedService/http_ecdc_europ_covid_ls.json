@@ -1,0 +1,19 @@
+{
+	"name": "http_ecdc_europ_covid_ls",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "ecdc Base URL",
+		"parameters": {
+			"ecdc_base_url": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "@{linkedService().ecdc_base_url}",
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

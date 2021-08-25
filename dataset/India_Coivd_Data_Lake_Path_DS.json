@@ -1,0 +1,37 @@
+{
+	"name": "India_Coivd_Data_Lake_Path_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IndiaCovid_processed_data",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "India_Covid_Project_datasets"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DakaLakeSource.json",
+				"folderPath": "datalakeFilesPath",
+				"fileSystem": "lookup-ind"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"SourceFileFolder": {
+					"type": "string"
+				},
+				"SQLTable": {
+					"type": "string"
+				},
+				"Schema": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

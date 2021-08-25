@@ -1,0 +1,160 @@
+{
+	"name": "pipeline2",
+	"properties": {
+		"activities": [
+			{
+				"name": "emp_scd2_V4_1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "SCD_Type2_DF",
+						"type": "DataFlowReference",
+						"parameters": {
+							"update_key_columns": {
+								"value": "'@{pipeline().parameters.update_key_columns_Comma_Separated}'",
+								"type": "Expression"
+							},
+							"insert_Key_column": {
+								"value": "'@{pipeline().parameters.insert_Key_column_Comma_Separated}'",
+								"type": "Expression"
+							},
+							"Key_Column": {
+								"value": "'@{pipeline().parameters.Target_Table_Key_Column}'",
+								"type": "Expression"
+							},
+							"target_tab_surrogate_col_name": {
+								"value": "'@{pipeline().parameters.target_tab_surrogate_col_name}'",
+								"type": "Expression"
+							},
+							"target_table_last_updated_date_name": {
+								"value": "'@{pipeline().parameters.target_table_last_updated_date_name}'",
+								"type": "Expression"
+							},
+							"Record_start_date": {
+								"value": "'@{pipeline().parameters.Record_start_date_Col_name}'",
+								"type": "Expression"
+							},
+							"Record_End_date": {
+								"value": "'@{pipeline().parameters.Record_End_date_Col_name}'",
+								"type": "Expression"
+							},
+							"Record_active_flag": {
+								"value": "'@{pipeline().parameters.Record_active_flag_Col_name}'",
+								"type": "Expression"
+							}
+						},
+						"datasetParameters": {
+							"sourceTable": {
+								"Source_Schema_Name": {
+									"value": "@pipeline().parameters.Source_Table_Scehma",
+									"type": "Expression"
+								},
+								"Source_Table_Name": {
+									"value": "@pipeline().parameters.Source_Table_Name",
+									"type": "Expression"
+								}
+							},
+							"TrgTable": {
+								"Trg_Schema_Name": {
+									"value": "@pipeline().parameters.Target_Table_Schema",
+									"type": "Expression"
+								},
+								"Trg_Table_Name": "@pipeline().parameters.Target_Table_Name"
+							},
+							"GetMaxSurrogateKey": {
+								"Trg_Schema_Name": "@pipeline().parameters.Target_Table_Schema",
+								"Trg_Table_Name": "@pipeline().parameters.Target_Table_Name"
+							},
+							"InsertNewRecordsSink": {
+								"Trg_Schema_Name": "@pipeline().parameters.Target_Table_Schema",
+								"Trg_Table_Name": "@pipeline().parameters.Target_Table_Name"
+							},
+							"InsertedUpdatedRecordsSink": {
+								"Trg_Schema_Name": "@pipeline().parameters.Target_Table_Schema",
+								"Trg_Table_Name": "@pipeline().parameters.Target_Table_Name"
+							},
+							"DeActivateOldRecords": {
+								"Trg_Schema_Name": "@pipeline().parameters.Target_Table_Schema",
+								"Trg_Table_Name": "@pipeline().parameters.Target_Table_Name"
+							},
+							"UpdateNonKeyColumnsSink": {
+								"Trg_Schema_Name": "@pipeline().parameters.Target_Table_Schema",
+								"Trg_Table_Name": {
+									"value": "@pipeline().parameters.Target_Table_Name",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"Source_Table_Scehma": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Source_Table_Name": {
+				"type": "string",
+				"defaultValue": "emp_src"
+			},
+			"Target_Table_Schema": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Target_Table_Name": {
+				"type": "string",
+				"defaultValue": "emp_trg"
+			},
+			"Target_Table_Key_Column": {
+				"type": "string",
+				"defaultValue": "empno"
+			},
+			"insert_Key_column_Comma_Separated": {
+				"type": "string",
+				"defaultValue": "job,hiredate"
+			},
+			"update_key_columns_Comma_Separated": {
+				"type": "string",
+				"defaultValue": "ename,dept,mgr,sal,comm"
+			},
+			"target_tab_surrogate_col_name": {
+				"type": "string",
+				"defaultValue": "emp_trg_key"
+			},
+			"target_table_last_updated_date_name": {
+				"type": "string",
+				"defaultValue": "etl_last_updated_date"
+			},
+			"Record_start_date_Col_name": {
+				"type": "string",
+				"defaultValue": "start_date"
+			},
+			"Record_End_date_Col_name": {
+				"type": "string",
+				"defaultValue": "end_date"
+			},
+			"Record_active_flag_Col_name": {
+				"type": "string",
+				"defaultValue": "active_flag"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-25T12:27:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

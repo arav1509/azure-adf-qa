@@ -1,0 +1,148 @@
+{
+	"name": "emp_scd2_V3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "emp_src",
+						"type": "DatasetReference"
+					},
+					"name": "sourceTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "TrgTable"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "GetMaxSurrogateKey"
+				}
+			],
+			"sinks": [
+				{
+					"name": "NA"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "InsertNewRecordsSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "InsertedUpdatedRecordsSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "DeActivateOldRecords"
+				},
+				{
+					"dataset": {
+						"referenceName": "emp_trg",
+						"type": "DatasetReference"
+					},
+					"name": "UpdateNonKeyColumnsSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedColumn1"
+				},
+				{
+					"name": "DerivedColumn2"
+				},
+				{
+					"name": "SelectTrgColumns"
+				},
+				{
+					"name": "SelectSrcColumns"
+				},
+				{
+					"name": "Join1"
+				},
+				{
+					"name": "NewRecordsFilter"
+				},
+				{
+					"name": "NewRecordSort"
+				},
+				{
+					"name": "OldSort"
+				},
+				{
+					"name": "insertSort1"
+				},
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "UpdateSort1"
+				},
+				{
+					"name": "UpdateActiveFlag"
+				},
+				{
+					"name": "ETLUpdatedDate"
+				},
+				{
+					"name": "AlterRow2"
+				},
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "Filter1"
+				},
+				{
+					"name": "UpdateSelect"
+				},
+				{
+					"name": "InsertSelect"
+				},
+				{
+					"name": "UpdateETLTime"
+				},
+				{
+					"name": "SCDInsertUpdatedRecords"
+				},
+				{
+					"name": "InsertSourceUpdatedRecords"
+				},
+				{
+					"name": "InsertNewRecords"
+				},
+				{
+					"name": "MaxSurrogateKey"
+				},
+				{
+					"name": "SurrogateKeyJoin"
+				},
+				{
+					"name": "SurrogateKey1"
+				},
+				{
+					"name": "SelectNewInsertedRecords"
+				},
+				{
+					"name": "DerivedColumn3"
+				}
+			],
+			"script": "parameters{\n\tupdate_key_columns as string ('ename,dept,mgr,sal,comm'),\n\tinsert_Key_column as string ('job,hiredate'),\n\tKey_Column as string ('empno')\n}\nsource(output(\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> sourceTable\nsource(output(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> TrgTable\nsource(output(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> GetMaxSurrogateKey\nSurrogateKey1 derive(Update_hash_key = md5(byNames(split($update_key_columns,','), 'sourceTable')),\n\t\tInsert_hash_key = md5(byNames(split($insert_Key_column,','), 'sourceTable')),\n\t\tTable_Key_column = md5(byNames(split($Key_Column,','), 'sourceTable')),\n\t\tSurrogate_key_Vaule = Max_Surrogate_Key+Key) ~> DerivedColumn1\nFilter1 derive(Trg_update_key = md5(byNames(split($update_key_columns,','), 'TrgTable')),\n\t\tTrg_Insert_Key = md5(byNames(split($insert_Key_column,','), 'TrgTable')),\n\t\tTrg_Key_column = md5(byNames(split($Key_Column,','), 'TrgTable'))) ~> DerivedColumn2\nDerivedColumn2 select(mapColumn(\n\t\ttrg_emp_trg_key = emp_trg_key,\n\t\ttrg_empno = empno,\n\t\ttrg_ename = ename,\n\t\ttrg_job = job,\n\t\ttrg_mgr = mgr,\n\t\ttrg_hiredate = hiredate,\n\t\ttrg_sal = sal,\n\t\ttrg_comm = comm,\n\t\ttrg_dept = dept,\n\t\ttrg_etl_last_updated_date = etl_last_updated_date,\n\t\ttrg_active_flag = active_flag,\n\t\ttrg_start_date = start_date,\n\t\ttrg_end_date = end_date,\n\t\tTrg_update_key,\n\t\tTrg_Insert_Key,\n\t\tTrg_Key_column\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectTrgColumns\nDerivedColumn1 select(mapColumn(\n\t\tsrc_empno = empno,\n\t\tsrc_ename = ename,\n\t\tsrc_job = job,\n\t\tsrc_mgr = mgr,\n\t\tsrc_hiredate = hiredate,\n\t\tsrc_sal = sal,\n\t\tsrc_comm = comm,\n\t\tsrc_dept = dept,\n\t\tsrc_Update_hash_key = Update_hash_key,\n\t\tsrc_Insert_hash_key = Insert_hash_key,\n\t\tsrc_Table_Key_column = Table_Key_column,\n\t\tSurrogate_Key_Value = Surrogate_key_Vaule\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectSrcColumns\nSelectSrcColumns, SelectTrgColumns join(src_Table_Key_column == Trg_Key_column,\n\tjoinType:'outer',\n\tbroadcast: 'auto')~> Join1\nJoin1 split(isNull(trg_empno),\n\tnot(isNull(trg_empno)),\n\tdisjoint: true) ~> NewRecordsFilter@(NewRecords, OldRecords)\nNewRecordsFilter@NewRecords sort(asc(src_empno, true)) ~> NewRecordSort\nNewRecordsFilter@OldRecords sort(asc(src_empno, true)) ~> OldSort\nConditionalSplit1@InserRecords sort(asc(src_empno, true)) ~> insertSort1\nOldSort split(src_Insert_hash_key!=Trg_Insert_Key,\n\tsrc_Update_hash_key!=Trg_update_key,\n\tdisjoint: false) ~> ConditionalSplit1@(InserRecords, UpdateRecords, NA)\nConditionalSplit1@UpdateRecords sort(asc(src_empno, true)) ~> UpdateSort1\nUpdateSelect alterRow(updateIf(true())) ~> UpdateActiveFlag\nUpdateSort1 derive(Trg_etl_last_updated_date = currentUTC()) ~> ETLUpdatedDate\nSelect1 alterRow(updateIf(true())) ~> AlterRow2\nETLUpdatedDate select(mapColumn(\n\t\temp_trg_key = trg_emp_trg_key,\n\t\tempno = src_empno,\n\t\tename = src_ename,\n\t\tjob = src_job,\n\t\tmgr = src_mgr,\n\t\thiredate = src_hiredate,\n\t\tsal = src_sal,\n\t\tcomm = src_comm,\n\t\tdept = src_dept,\n\t\tetl_updated_date = ETLUpdatedDate@Trg_etl_last_updated_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nTrgTable filter(active_flag == '1') ~> Filter1\nUpdateETLTime select(mapColumn(\n\t\ttrg_emp_trg_key,\n\t\ttrg_active_flag = active_flag,\n\t\ttrg_end_date = end_date,\n\t\ttrg_etl_last_updated_date = etl_last_updated_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> UpdateSelect\nSCDInsertUpdatedRecords select(mapColumn(\n\t\temp_trg_key = Surrogate_Key_Value,\n\t\tempno = src_empno,\n\t\tename = src_ename,\n\t\tjob = src_job,\n\t\tmgr = src_mgr,\n\t\thiredate = src_hiredate,\n\t\tsal = src_sal,\n\t\tcomm = src_comm,\n\t\tdept = src_dept,\n\t\tend_date,\n\t\tactive_flag,\n\t\tetl_last_updated_date,\n\t\tstart_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> InsertSelect\ninsertSort1 derive(etl_last_updated_date = currentUTC(),\n\t\tactive_flag = 0,\n\t\tend_date = currentUTC()) ~> UpdateETLTime\ninsertSort1 derive(end_date = toDate('31-DEC-3000','dd-MMM-yyyy'),\n\t\tactive_flag = 1,\n\t\tetl_last_updated_date = currentUTC(),\n\t\tstart_date = currentUTC()) ~> SCDInsertUpdatedRecords\nInsertSelect alterRow(insertIf(true())) ~> InsertSourceUpdatedRecords\nSelectNewInsertedRecords alterRow(insertIf(true())) ~> InsertNewRecords\nGetMaxSurrogateKey aggregate(Max_Surrogate_Key = coalesce(max(emp_trg_key),0)) ~> MaxSurrogateKey\nsourceTable, MaxSurrogateKey join(1==1,\n\tjoinType:'cross',\n\tbroadcast: 'auto')~> SurrogateKeyJoin\nSurrogateKeyJoin keyGenerate(output(Key as long),\n\tstartAt: 1L) ~> SurrogateKey1\nDerivedColumn3 select(mapColumn(\n\t\temp_trg_key = Surrogate_Key_Value,\n\t\tempno = src_empno,\n\t\tename = src_ename,\n\t\tjob = src_job,\n\t\tmgr = src_mgr,\n\t\thiredate = src_hiredate,\n\t\tsal = src_sal,\n\t\tcomm = src_comm,\n\t\tdept = src_dept,\n\t\tactive_flag = trg_active_flag,\n\t\tstart_date = trg_start_date,\n\t\tend_date = trg_end_date,\n\t\tetl_last_updated_date = trg_etl_last_updated_date\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectNewInsertedRecords\nNewRecordSort derive(trg_start_date = currentUTC(),\n\t\ttrg_end_date = toDate('31-DEC-3000','dd-MMM-yyyy'),\n\t\ttrg_active_flag = 1,\n\t\ttrg_etl_last_updated_date = currentUTC()) ~> DerivedColumn3\nConditionalSplit1@NA sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tstore: 'cache',\n\tformat: 'inline',\n\toutput: false,\n\tsaveOrder: 1) ~> NA\nInsertNewRecords sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 5,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_trg_key,\n\t\tempno,\n\t\tename,\n\t\tjob,\n\t\tmgr,\n\t\thiredate,\n\t\tsal,\n\t\tcomm,\n\t\tdept,\n\t\tetl_last_updated_date,\n\t\tactive_flag,\n\t\tstart_date,\n\t\tend_date\n\t)) ~> InsertNewRecordsSink\nInsertSourceUpdatedRecords sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 4,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_trg_key,\n\t\tempno,\n\t\tename,\n\t\tjob,\n\t\tmgr,\n\t\thiredate,\n\t\tsal,\n\t\tcomm,\n\t\tdept,\n\t\tetl_last_updated_date,\n\t\tactive_flag,\n\t\tstart_date,\n\t\tend_date\n\t)) ~> InsertedUpdatedRecordsSink\nUpdateActiveFlag sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['emp_trg_key'],\n\tskipKeyWrites:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 3,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_trg_key = trg_emp_trg_key,\n\t\tetl_last_updated_date = trg_etl_last_updated_date,\n\t\tactive_flag = trg_active_flag,\n\t\tend_date = trg_end_date\n\t)) ~> DeActivateOldRecords\nAlterRow2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\temp_trg_key as integer,\n\t\tempno as integer,\n\t\tename as string,\n\t\tjob as string,\n\t\tmgr as integer,\n\t\thiredate as timestamp,\n\t\tsal as decimal(7,2),\n\t\tcomm as decimal(7,2),\n\t\tdept as integer,\n\t\tetl_last_updated_date as date,\n\t\tactive_flag as string,\n\t\tstart_date as date,\n\t\tend_date as date\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['emp_trg_key'],\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 2,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\temp_trg_key,\n\t\tempno,\n\t\tename,\n\t\tjob,\n\t\tmgr,\n\t\thiredate,\n\t\tsal,\n\t\tcomm,\n\t\tdept,\n\t\tetl_last_updated_date = etl_updated_date\n\t)) ~> UpdateNonKeyColumnsSink"
+		}
+	}
+}

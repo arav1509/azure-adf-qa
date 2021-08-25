@@ -1,0 +1,20 @@
+{
+	"name": "SCD_Tables_Column_Details",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://arav1509sadl1.dfs.core.windows.net",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "DataLake_KV_lds",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "arav1509sadl1-kv-secret-keys",
+				"secretVersion": "afae1a09f9a14470b1581f1757668125"
+			}
+		}
+	}
+}

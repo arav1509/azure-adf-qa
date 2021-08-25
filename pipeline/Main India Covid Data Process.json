@@ -1,0 +1,172 @@
+{
+	"name": "Main India Covid Data Process",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send Completion Email",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadIndia_Covid_data_PL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Send Email PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"title": "India Covid Data Process Completed",
+						"message": "India Covid Data Process Completed",
+						"color": "green",
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"pipelineRunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"time": {
+							"value": "@utcnow()",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Send Failure Email",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadIndia_Covid_data_PL",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Send Email PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"title": "India Covid Data Process got Failed",
+						"message": {
+							"value": "@activity('Run_LoadIndia_Covid_data_PL').error.message",
+							"type": "Expression"
+						},
+						"color": "red",
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"pipelineRunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"time": {
+							"value": "@utcnow()",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Run_LoadIndia_Covid_data_PL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Send Job Start Email",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Run_LoadIndia_Covid_data_PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Send Job Start Email",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Send Email PL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"title": "India Covid Data Process Started",
+						"message": "India Covid Data Process Started",
+						"color": "green",
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"pipelineRunId": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"time": {
+							"value": "@utcnow()",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Archive raw Data",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Send Completion Email",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "archive_India_covid_raw-data",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "India_Covid_Project"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-25T12:27:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

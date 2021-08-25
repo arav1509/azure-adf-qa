@@ -1,0 +1,19 @@
+{
+	"name": "azuresql_covid_ls",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "DataLake_KV_lds",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "azure-db-arav1509ssdb-kv-secret-keys",
+				"secretVersion": "3096f9df698245c6b6929c5bb2560e79"
+			}
+		}
+	}
+}

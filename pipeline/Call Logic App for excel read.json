@@ -1,0 +1,35 @@
+{
+	"name": "Call Logic App for excel read",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-13.eastus.logic.azure.com:443/workflows/12efd15b874d4e80872c1c64f447c7a7/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=8K75KzWEzTTbJi_0qgkYV2wOAL0aCgEt6yTOcdngHF8",
+					"method": "POST",
+					"body": {
+						"ExcelFileName": "sampleData2.xlsx"
+					}
+				}
+			}
+		],
+		"variables": {
+			"test": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-25T12:27:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,33 @@
+{
+	"name": "Get and Tranformation India Covid data PL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get and Tranformation India Covid data",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/India-covid-report/get-covid-data/Load_India_covid_data"
+				},
+				"linkedServiceName": {
+					"referenceName": "Get_India_covid_data_DataBricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "India_Covid_Project"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-25T12:27:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

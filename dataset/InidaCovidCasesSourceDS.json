@@ -1,0 +1,75 @@
+{
+	"name": "InidaCovidCasesSourceDS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "IndiaCovid_processed_data",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "India_Covid_Project_datasets"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "processed-ind"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "StateName",
+				"type": "String"
+			},
+			{
+				"name": "StateCode",
+				"type": "String"
+			},
+			{
+				"name": "TotalPopulationBy2018",
+				"type": "String"
+			},
+			{
+				"name": "Total_ConfirmedCases",
+				"type": "String"
+			},
+			{
+				"name": "StateWiseConfirmedCasesRank",
+				"type": "String"
+			},
+			{
+				"name": "ConfirmedCasesRate",
+				"type": "String"
+			},
+			{
+				"name": "Total_DeathCases",
+				"type": "String"
+			},
+			{
+				"name": "StateWiseDeathCasesRank",
+				"type": "String"
+			},
+			{
+				"name": "DeathCasesRate",
+				"type": "String"
+			},
+			{
+				"name": "Total_RecoveredCases",
+				"type": "String"
+			},
+			{
+				"name": "StateWiseRecoveredCasesRank",
+				"type": "String"
+			},
+			{
+				"name": "RecoveredCasesRate",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

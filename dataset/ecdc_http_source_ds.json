@@ -1,0 +1,23 @@
+{
+	"name": "ecdc_http_source_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "covidreportingsa_ablob_ls",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "lookup"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "ecdc_file_list_for_2_files.json",
+				"container": "ecdc"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,43 @@
+{
+	"name": "covid_data_ecdc_Source_ds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "http_ecdc_europ_covid_ls",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ecdc_base_url": {
+					"value": "@dataset().BaseURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"RelativeUrl": {
+				"type": "string"
+			},
+			"BaseURL": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "processed"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@dataset().RelativeUrl",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

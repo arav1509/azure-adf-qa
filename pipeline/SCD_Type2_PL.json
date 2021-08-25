@@ -1,0 +1,154 @@
+{
+	"name": "SCD_Type2_PL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "SCDTableColumns_DS",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 5,
+					"activities": [
+						{
+							"name": "SCD Type 2 Data Flow",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "SCD_Type2_DF",
+									"type": "DataFlowReference",
+									"parameters": {
+										"update_key_columns": {
+											"value": "'@{item().update_key_columns_Comma_Separated}'",
+											"type": "Expression"
+										},
+										"insert_Key_column": {
+											"value": "'@{item().insert_Key_column_Comma_Separated}'",
+											"type": "Expression"
+										},
+										"Key_Column": {
+											"value": "'@{item().Target_Table_Key_Column}'",
+											"type": "Expression"
+										},
+										"target_tab_surrogate_col_name": {
+											"value": "'@{item().target_tab_surrogate_col_name}'",
+											"type": "Expression"
+										},
+										"target_table_last_updated_date_name": {
+											"value": "'@{item().target_table_last_updated_date_name}'",
+											"type": "Expression"
+										},
+										"Record_start_date": {
+											"value": "'@{item().Record_start_date_Col_name}'",
+											"type": "Expression"
+										},
+										"Record_End_date": {
+											"value": "'@{item().Record_End_date_Col_name}'",
+											"type": "Expression"
+										},
+										"Record_active_flag": {
+											"value": "'@{item().Record_active_flag_Col_name}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"sourceTable": {
+											"Source_Schema_Name": {
+												"value": "@item().Source_Table_Scehma",
+												"type": "Expression"
+											},
+											"Source_Table_Name": "@item().Source_Table_Name"
+										},
+										"TrgTable": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										},
+										"GetMaxSurrogateKey": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										},
+										"InsertNewRecordsSink": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										},
+										"InsertedUpdatedRecordsSink": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										},
+										"DeActivateOldRecords": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										},
+										"UpdateNonKeyColumnsSink": {
+											"Trg_Schema_Name": "@item().Target_Table_Schema",
+											"Trg_Table_Name": "@item().Target_Table_Name"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "MemoryOptimized"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-08-25T12:27:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

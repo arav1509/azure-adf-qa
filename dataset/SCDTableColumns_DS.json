@@ -1,0 +1,74 @@
+{
+	"name": "SCDTableColumns_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SCD_Tables_Column_Details",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "supermarket_emp_table_details.csv",
+				"folderPath": "scd-table-key-columns",
+				"fileSystem": "scd-table-details"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Source_Table_Scehma",
+				"type": "String"
+			},
+			{
+				"name": "Source_Table_Name",
+				"type": "String"
+			},
+			{
+				"name": "Target_Table_Schema",
+				"type": "String"
+			},
+			{
+				"name": "Target_Table_Name",
+				"type": "String"
+			},
+			{
+				"name": "Target_Table_Key_Column",
+				"type": "String"
+			},
+			{
+				"name": "insert_Key_column_Comma_Separated",
+				"type": "String"
+			},
+			{
+				"name": "update_key_columns_Comma_Separated",
+				"type": "String"
+			},
+			{
+				"name": "target_tab_surrogate_col_name",
+				"type": "String"
+			},
+			{
+				"name": "target_table_last_updated_date_name",
+				"type": "String"
+			},
+			{
+				"name": "Record_start_date_Col_name",
+				"type": "String"
+			},
+			{
+				"name": "Record_End_date_Col_name",
+				"type": "String"
+			},
+			{
+				"name": "Record_active_flag_Col_name",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
