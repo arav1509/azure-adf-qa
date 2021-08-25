@@ -57,7 +57,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "data-lake-qa-kv",
-						"secretVersion": "c4de509d8b6744e9abd364f00bb25e75"
+						"secretVersion": ""
 					}
 				}
 			},
@@ -80,7 +80,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "[parameters('arav1509_storage_account_ls_properties_typeProperties_connectionString_secretName')]",
-						"secretVersion": "e976bece040243ba83da8f9134f15eee"
+						"secretVersion": ""
 					}
 				}
 			},
@@ -103,7 +103,7 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "[parameters('azure_sql_ls_properties_typeProperties_connectionString_secretName')]",
-						"secretVersion": "92457747a48340a88b584a336862a6bd"
+						"secretVersion": ""
 					}
 				}
 			},
