@@ -1,10 +1,6 @@
 {
 	"name": "IndiaCoivdTables",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "azuresql_covid_ls",
-			"type": "LinkedServiceReference"
-		},
 		"parameters": {
 			"schema": {
 				"type": "string"
