@@ -11,7 +11,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "azure-sql-qa-kv",
-				"secretVersion": "92457747a48340a88b584a336862a6bd"
+				"secretVersion": ""
 			}
 		}
 	}
