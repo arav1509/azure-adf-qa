@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "arav1509-adf-qa"
+		},
+		"kv_qa_ls_properties_typeProperties_baseUrl": {
+			"value": "https://arav1509-qa-kv.vault.azure.net/"
+		},
+		"arav1509_dl_ls_properties_typeProperties_url": {
+			"value": "https://arav1509sadl1.dfs.core.windows.net"
+		},
+		"arav1509_storage_account_ls_properties_typeProperties_connectionString_secretName": {
+			"value": "storage-account-kv"
+		},
+		"azure_sql_ls_properties_typeProperties_connectionString_secretName": {
+			"value": "azure-sql-qa-kv"
+		}
+	}
+}

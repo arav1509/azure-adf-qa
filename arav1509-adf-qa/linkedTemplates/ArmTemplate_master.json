@@ -1,0 +1,70 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "arav1509-adf-qa"
+		},
+		"kv_qa_ls_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://arav1509-qa-kv.vault.azure.net/"
+		},
+		"arav1509_dl_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://arav1509sadl1.dfs.core.windows.net"
+		},
+		"arav1509_storage_account_ls_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "storage-account-kv"
+		},
+		"azure_sql_ls_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "azure-sql-qa-kv"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "arav1509-adf-qa_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"kv_qa_ls_properties_typeProperties_baseUrl": {
+						"value": "[parameters('kv_qa_ls_properties_typeProperties_baseUrl')]"
+					},
+					"arav1509_dl_ls_properties_typeProperties_url": {
+						"value": "[parameters('arav1509_dl_ls_properties_typeProperties_url')]"
+					},
+					"arav1509_storage_account_ls_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('arav1509_storage_account_ls_properties_typeProperties_connectionString_secretName')]"
+					},
+					"azure_sql_ls_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('azure_sql_ls_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
