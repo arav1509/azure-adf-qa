@@ -1,0 +1,19 @@
+{
+	"name": "arav1509_dl_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://arav1509sadl1.dfs.core.windows.net",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "kv_qa_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "data-lake-qa-kv",
+				"secretVersion": "c4de509d8b6744e9abd364f00bb25e75"
+			}
+		}
+	}
+}
