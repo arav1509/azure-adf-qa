@@ -1,0 +1,18 @@
+{
+	"name": "arav1509_storage_account_ls",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "kv_qa_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "storage-account-kv",
+				"secretVersion": "e976bece040243ba83da8f9134f15eee"
+			}
+		}
+	}
+}
