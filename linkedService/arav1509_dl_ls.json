@@ -12,7 +12,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "data-lake-qa-kv",
-				"secretVersion": "c4de509d8b6744e9abd364f00bb25e75"
+				"secretVersion": ""
 			}
 		}
 	}
